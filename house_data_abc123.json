@@ -1,0 +1,23 @@
+{
+  "success": true,
+  "house_data": {
+      "apartments": [
+          {
+              "id": "Квартира 1",
+              "floor": {"size": [10.0, 0.2, 11.5], "position": [5.0, 0.1, 5.75], ...},
+              "walls": [...],
+              "room_layout": {...},
+              "balconies": [...]
+          },
+          {
+              "id": "Квартира 2",
+              "floor": {"size": [10.0, 0.2, 11.5], "position": [16.0, 0.1, 5.75], ...},
+              "walls": [...],
+              "room_layout": {...},
+              "balconies": [...]
+          },
+          ...
+      ],
+      "total_width": 43.0
+  }
+}

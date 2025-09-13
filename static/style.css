@@ -1,0 +1,652 @@
+
+/* CSS Variables for Maintainability */
+:root {
+    --primary: #616263;
+    --primary-hover: #7a7b7c;
+    --background-dark: #2a2a2a;
+    --background-dark-transparent: rgba(34, 34, 34, 0.95);
+    --text-light: #fff;
+    --border-light: #f9fbfc;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Global styles */
+body {
+    background-color: #bbb1b1;
+    color: var(--primary);
+    font-family: 'Inter', Arial, sans-serif;
+    margin: 0;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* 3D container */
+#threeDContainer {
+    position: relative;
+    background-color: #000;
+    border: 2px solid var(--border-light);
+    border-radius: 10px;
+    width: 98%;
+    max-width: 1600px;
+    height: 98vh;
+    box-shadow: 0 4px 12px rgba(241, 243, 244, 0.3);
+    overflow: hidden;
+}
+
+/* Main container */
+.container {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    width: 100%;
+    max-width: 1450px;
+    padding: 10px;
+    border-radius: 6px;
+    color: var(--text-light);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.chat {
+    flex-wrap: wrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Header */
+h1 {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 1.8em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-shadow: 0 2px 4px rgba(133, 138, 143, 0.5);
+    margin: 0;
+    z-index: 15;
+    padding: 8px 12px;
+    border-radius: 5px;
+    color: var(--primary);
+}
+
+h1 img {
+    height: 40px;
+    width: auto;
+    filter: drop-shadow(0 2px 4px rgba(97, 98, 99, 0.5));
+    animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Smaller buttons (VR, inventory, download) */
+.round-blue-btn, #inventory-btn, #download-btn {
+    position: absolute;
+    right: 10px;
+    z-index: 15;
+    background: var(--primary);
+    color: var(--text-light);
+    border: none;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-size: 0.9em;
+}
+
+.paramters{
+    flex-wrap: wrap;
+    height: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    bottom : 10px;
+}
+
+.round-blue-btn {
+    top: 60px;
+}
+
+#inventory-btn {
+    top: 106px;
+}
+
+#download-btn {
+    top: 152px;
+}
+
+.round-blue-btn:hover, #inventory-btn:hover, #download-btn:hover {
+    background: var(--primary-hover);
+    transform: scale(1.1);
+}
+
+/* Form inputs */
+.chat-input {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;    
+}
+
+#user-input, #floors-input, #image-upload {
+    width: 10%;
+    flex: 1;
+    padding: 8px;
+    border: 1px solid var(--primary);
+    border-radius: 4px;
+    background: var(--background-dark);
+    color: var(--text-light);
+    outline: none;
+    font-size: 0.85em;
+    transition: border-color 0.3s ease;
+}
+
+#user-input:focus, #floors-input:focus, #image-upload:focus {
+    border-color: var(--primary-hover);
+}
+
+#image-upload {
+    padding: 6px;
+}
+
+.upload-options {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+#floors-input {
+    width: 150px;
+    max-width: 150px;
+}
+
+.icon-button {
+    background: var(--primary);
+    color: var(--text-light);
+    border: none;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-size: 0.9em;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-button:hover {
+    background: var(--primary-hover);
+    transform: scale(1.05);
+}
+
+/* Inventory */
+.inventory-container {
+    position: absolute;
+    top: 105px;
+    right: 10px;
+    background: var(--background-dark-transparent);
+    padding: 10px;
+    border: 1px solid var(--primary);
+    box-shadow: var(--shadow);
+    z-index: 20;
+    max-width: 200px;
+    max-height: 50vh;
+    overflow-y: auto;
+    border-radius: 6px;
+    color: var(--text-light);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.inventory-container[style*="display: none"] {
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+}
+
+.inventory-container[style*="display: block"] {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.inventory-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.inventory-header h2 {
+    margin: 0;
+    font-size: 1.1em;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.1em;
+    cursor: pointer;
+    color: var(--text-light);
+    transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+    color: var(--primary-hover);
+}
+
+.inventory-items {
+    display: flex;
+    flex-direction: column;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border-bottom: 1px solid var(--primary);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.item:hover {
+    background-color: #444;
+}
+
+.item img {
+    margin-right: 8px;
+    border-radius: 3px;
+    width: 40px;
+}
+
+.item p {
+    margin: 0;
+    font-size: 0.85em;
+}
+
+/* Size controls (single-row layout) */
+#size-controls {
+    padding: 8px;
+    background: var(--background-dark);
+    border: 1px solid var(--primary);
+    border-radius: 4px;
+    color: var(--text-light);
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    align-items: center;
+    transition: opacity 0.3s ease;
+    min-width: 360px;
+}
+
+#size-controls label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85em;
+    min-width: 120px;
+    flex-shrink: 0;
+}
+
+#size-controls input {
+    padding: 5px;
+    border: 1px solid var(--primary);
+    background: #444;
+    color: var(--text-light);
+    border-radius: 3px;
+    width: 60px;
+    font-size: 0.85em;
+    flex-shrink: 0;
+}
+
+#size-controls button {
+    background: var(--primary);
+    color: var(--text-light);
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-size: 0.85em;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+#size-controls button:hover {
+    background: var(--primary-hover);
+    transform: scale(1.05);
+}
+
+/* Size panel (single-row layout, extended for screenshot) */
+.size-panel {
+    position: absolute;
+    bottom: 80px;
+    left: 20px;
+    padding: 8px;
+    background: var(--background-dark-transparent);
+    border: 1px solid var(--primary);
+    border-radius: 4px;
+    color: var(--text-light);
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    align-items: center;
+    z-index: 11;
+    box-shadow: var(--shadow);
+    min-width: 600px;
+}
+
+.size-panel label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85em;
+    min-width: 110px;
+    flex-shrink: 0;
+}
+
+.size-panel select,
+.size-panel input[type="number"] {
+    padding: 5px;
+    border: 1px solid var(--primary);
+    background: #444;
+    color: var(--text-light);
+    border-radius: 3px;
+    width: 60px;
+    font-size: 0.85em;
+    flex-shrink: 0;
+}
+
+.size-panel select {
+    width: 120px;
+}
+
+.size-panel input[type="file"] {
+    padding: 5px;
+    border: none;
+    background: none;
+    color: var(--text-light);
+    font-size: 0.85em;
+    flex-shrink: 0;
+}
+
+.size-panel button {
+    background: var(--primary);
+    color: var(--text-light);
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-size: 0.85em;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.size-panel button:hover {
+    background: var(--primary-hover);
+    transform: scale(1.05);
+}
+
+/* Info blocks */
+#house-info, #object-info {
+    font-size: 0.85em;
+    padding: 6px;
+    background: var(--background-dark);
+    border-radius: 4px;
+    margin-bottom: 6px;
+}
+
+#object-info {
+    color: #aaa;
+}
+
+/* Three.js canvas */
+#three-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Accessibility enhancements */
+.item:focus {
+    outline: 2px solid var(--primary-hover);
+    background-color: #444;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #threeDContainer {
+        width: 95%;
+        height: 90vh;
+    }
+
+    .container {
+        width: calc(100% - 20px);
+        max-width: 600px;
+        padding: 8px;
+    }
+
+    #size-controls {
+        gap: 6px;
+        padding: 6px;
+        min-width: 300px;
+    }
+
+    #size-controls label {
+        min-width: 100px;
+        font-size: 0.8em;
+    }
+
+    #size-controls input {
+        width: 50px;
+    }
+
+    #size-controls button {
+        padding: 4px 8px;
+        font-size: 0.8em;
+    }
+
+    .size-panel {
+        bottom: 70px;
+        left: 15px;
+        padding: 6px;
+        gap: 6px;
+        min-width: 500px;
+        overflow-x: auto;
+    }
+
+    .size-panel label {
+        min-width: 100px;
+        font-size: 0.8em;
+    }
+
+    .size-panel select,
+    .size-panel input[type="number"] {
+        width: 50px;
+    }
+
+    .size-panel select {
+        width: 100px;
+    }
+
+    .size-panel input[type="file"] {
+        font-size: 0.8em;
+    }
+
+    .size-panel button {
+        padding: 4px 8px;
+        font-size: 0.8em;
+    }
+
+    h1 {
+        font-size: 1.5em;
+        top: 10px;
+        left: 10px;
+        padding: 6px 10px;
+    }
+
+    h1 img {
+        height: 35px;
+    }
+
+    .round-blue-btn {
+        top: 50px;
+        right: 8px;
+    }
+
+    #inventory-btn {
+        top: 94px;
+        right: 8px;
+    }
+
+    #download-btn {
+        top: 138px;
+        right: 8px;
+    }
+
+    .chat-input {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    #user-input, #image-upload, #floors-input {
+        width: 100%;
+    }
+
+    .upload-options {
+        justify-content: space-between;
+    }
+
+    .inventory-container {
+        max-width: 180px;
+        left: 8px;
+        top: 8px;
+    }
+
+    #floors-input {
+        width: 120px;
+        max-width: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        width: calc(100% - 16px);
+        left: 8px;
+        bottom: 8px;
+        padding: 6px;
+    }
+
+    #size-controls {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding: 6px;
+        gap: 4px;
+        min-width: 280px;
+    }
+
+    #size-controls label {
+        min-width: 90px;
+        font-size: 0.75em;
+    }
+
+    #size-controls input {
+        width: 45px;
+        padding: 4px;
+    }
+
+    #size-controls button {
+        padding: 4px 6px;
+        font-size: 0.75em;
+    }
+
+    .size-panel {
+        bottom: 60px;
+        left: 10px;
+        padding: 6px;
+        gap: 4px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        min-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .size-panel label {
+        min-width: 90px;
+        font-size: 0.75em;
+    }
+
+    .size-panel select,
+    .size-panel input[type="number"] {
+        width: 45px;
+        padding: 4px;
+    }
+
+    .size-panel select {
+        width: 80px;
+    }
+
+    .size-panel input[type="file"] {
+        font-size: 0.75em;
+    }
+
+    .size-panel button {
+        padding: 4px 6px;
+        font-size: 0.75em;
+    }
+
+    h1 {
+        font-size: 1.3em;
+        top: 5px;
+        left: 5px;
+    }
+
+    .round-blue-btn, #inventory-btn, #download-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8em;
+    }
+
+    .round-blue-btn {
+        top: 45px;
+        right: 5px;
+    }
+
+    #inventory-btn {
+        top: 87px;
+        right: 5px;
+    }
+
+    #download-btn {
+        top: 129px;
+        right: 5px;
+    }
+
+    .inventory-container {
+        max-width: 90%;
+        left: 5%;
+    }
+
+    #floors-input {
+        width: 120px;
+        max-width: 120px;
+    }
+}

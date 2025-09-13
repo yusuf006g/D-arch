@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание 3D дома</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        input[type="file"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #333;
+            background-color: #fafafa;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="file"]:focus,
+        input[type="number"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        input[type="number"] {
+            max-width: 100px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #result {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        #result p {
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        #result p[style*="color: green"] {
+            background-color: #e8f5e9;
+        }
+
+        #result p[style*="color: red"] {
+            background-color: #ffebee;
+        }
+
+        #viewerModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #viewerContainer {
+            width: 80%;
+            height: 80%;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #viewer {
+            width: 100%;
+            height: 100%;
+        }
+
+        #closeViewer {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 8px 15px;
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #closeViewer:hover {
+            background-color: #cc0000;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            button {
+                font-size: 14px;
+            }
+
+            #viewerContainer {
+                width: 95%;
+                height: 70%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Создание 3D модели дома с мебелью</h1>
+        
+        <form id="uploadForm" enctype="multipart/form-data">
+            <div class="input-group">
+                <label for="floor_plan">Загрузите план этажа:</label>
+                <input type="file" id="floor_plan" name="floor_plan" accept="image/*" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="floors">Количество этажей:</label>
+                <input type="number" id="floors" name="floors" min="1" value="1" required>
+            </div>
+            
+            <div class="input-group">
+                <label>Загрузите изображения мебели (до 6):</label>
+                <*:*:input type="file" name="furniture" accept="image/*" multiple>
+            </div>
+            
+            <button type="submit">Создать 3D модель</button>
+        </form>
+
+        <div id="result"></div>
+    </div>
+
+    <div id="viewerModal">
+        <div id="viewerContainer">
+            <canvas id="viewer"></canvas>
+            <button id="closeViewer">Закрыть</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script>
+        let scene, camera, renderer, controls;
+
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const furnitureFiles = document.querySelector('input[name="furniture"]').files;
+            if (furnitureFiles.length > 6) {
+                alert('Максимум 6 изображений мебели!');
+                return;
+            }
+
+            try {
+                const response = await fetch('/process', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    document.getElementById('result').innerHTML = `<p style="color: red;">Ошибка: ${error.error}</p>`;
+                    return;
+                }
+
+                const blob = await response.blob();
+                const text = await blob.text();
+                const houseData = JSON.parse(text);
+
+                // Скачивание файла
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'house_data.json';
+                a.click();
+                window.URL.revokeObjectURL(url);
+
+                document.getElementById('result').innerHTML = '<p style="color: green;">Модель успешно создана! Открывается 3D-просмотр...</p>';
+                show3DViewer(houseData);
+            } catch (err) {
+                document.getElementById('result').innerHTML = `<p style="color: red;">Ошибка: ${err.message}</p>`;
+            }
+        });
+
+        function show3DViewer(houseData) {
+            const modal = document.getElementById('viewerModal');
+            modal.style.display = 'flex';
+
+            // Инициализация Three.js
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('viewer') });
+            renderer.setSize(document.getElementById('viewerContainer').clientWidth, document.getElementById('viewerContainer').clientHeight);
+
+            // Добавляем освещение
+            const ambientLight = new THREE.AmbientLight(0x404040);
+            scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+            directionalLight.position.set(0, 1, 1);
+            scene.add(directionalLight);
+
+            // Добавляем пол
+            const floorGeometry = new THREE.BoxGeometry(houseData.floor.size[0], houseData.floor.thickness, houseData.floor.size[2]);
+            const floorMaterial = new THREE.MeshBasicMaterial({ color: houseData.floor.color });
+            const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+            floor.position.set(houseData.floor.position[0], houseData.floor.position[1], houseData.floor.position[2]);
+            scene.add(floor);
+
+            // Добавляем стены
+            houseData.walls.forEach(wall => {
+                const wallGeometry = new THREE.BoxGeometry(wall.size[0], wall.size[1], wall.size[2]);
+                const wallMaterial = new THREE.MeshBasicMaterial({ color: wall.color });
+                const wallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
+                wallMesh.position.set(wall.position[0], wall.position[1], wall.position[2]);
+                wallMesh.rotation.y = THREE.MathUtils.degToRad(wall.rotation[1]);
+                scene.add(wallMesh);
+            });
+
+            // Добавляем мебель
+            houseData.furniture.forEach(item => {
+                const furnitureGeometry = new THREE.BoxGeometry(item.size[0], item.size[1], item.size[2]);
+                const furnitureMaterial = new THREE.MeshBasicMaterial({ color: item.color });
+                const furnitureMesh = new THREE.Mesh(furnitureGeometry, furnitureMaterial);
+                furnitureMesh.position.set(item.position[0], item.position[1], item.position[2]);
+                scene.add(furnitureMesh);
+            });
+
+            // Позиционируем камеру
+            camera.position.set(0, 10, 20);
+            camera.lookAt(0, 0, 0);
+
+            // Анимация
+            function animate() {
+                requestAnimationFrame(animate);
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            // Закрытие окна
+            document.getElementById('closeViewer').addEventListener('click', () => {
+                modal.style.display = 'none';
+                scene = null;
+                renderer.dispose();
+            });
+        }
+    </script>
+</body>
+</html>

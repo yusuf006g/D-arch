@@ -1,0 +1,220 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D-arch</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/GLTFLoader.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1><img src="{{ url_for('static', filename='1.png') }}" alt="D"> -arch</h1>
+        <select id="language-selector">
+            <option value="en">English</option>
+            <option value="ru" selected>Русский</option>
+        </select>
+
+        <div id="threeDContainer"></div>
+        <div id="house-info" style="margin-top: 10px;"></div>
+        <div id="object-info" style="margin-top: 5px; color: #555;"></div>
+        <div id="size-controls" style="display: none; margin-top: 10px;">
+            <label>Ширина: <input type="number" id="width" step="0.1" value="6"></label><br>
+            <label>Глубина: <input type="number" id="depth" step="0.1" value="6"></label><br>
+            <button onclick="updateRoomSize()">Обновить размеры</button>
+        </div>
+        <button id="download-btn" style="display: none; margin-top: 10px;">Скачать GLB</button>
+        <button id="inventory-btn" style="margin-top: 10px;">Открыть инвентарь</button>
+
+        <form id="chat-form" class="chat-input">
+            <input type="text" id="user-input" placeholder="Например: '6 на 10 2 этаж 3 комнаты'" autofocus />
+            <button type="submit">➤</button>
+        </form>
+
+        <form id="upload-form" class="chat-input" enctype="multipart/form-data">
+            <input type="file" id="image-upload" accept="image/*" />
+            <div id="upload-options" class="upload-options">
+                <input type="number" id="floors-input" placeholder="Количество этажей" min="1" value="1" style="width: 150px;" />
+                <button type="submit" id="upload-submit-btn" class="icon-button">⬆️</button>
+            </div>
+        </form>
+
+        <div id="inventory-container" class="inventory-container" style="display: none;">
+            <div class="inventory-header">
+                <h2>Инвентарь</h2>
+                <button id="close-inventory" class="close-btn">✖</button>
+            </div>
+            <div id="inventory-items" class="inventory-items">
+                <div class="item" data-model="{{ url_for('static', filename='assets/3D_sofa_14.glb') }}" data-type="Мебель (диван)">
+                    <img src="{{ url_for('static', filename='assets/texture1.jpg') }}" alt="Sofa" width="50">
+                    <p>Диван</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D-arch</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+<body>
+
+
+    <div id="threeDContainer"></div>
+            <div class="container">
+        <h1><img src="{{ url_for('static', filename='1.png') }}" alt="D"> -arch</h1>
+        <select id="language-selector">
+        </select>
+
+        <div id="house-info" style="margin-top: 10px;"></div>
+        <div id="object-info" style="margin-top: 5px; color: #555;"></div>
+        <div id="size-controls" style="display: none; margin-top: 10px;">
+            <label>Ширина: <input type="number" id="width" step="0.1" value="6"></label><br>
+            <label>Глубина: <input type="number" id="depth" step="0.1" value="6"></label><br>
+            <button onclick="updateRoomSize()">Обновить размеры</button>
+        </div>
+        <button id="download-btn" style="display: none; margin-top: 10px;">Скачать GLB</button>
+        <button id="inventory-btn" style="margin-top: 10px;">Открыть инвентарь</button>
+
+        <form id="chat-form" class="chat-input">
+            <input type="text" id="user-input" placeholder="Например: '6 на 10 2 этаж 3 комнаты'" autofocus />
+            <button type="submit">➤</button>
+        </form>
+
+        <form id="upload-form" class="chat-input" enctype="multipart/form-data">
+            <input type="file" id="image-upload" accept="image/*" />
+            <div id="upload-options" class="upload-options">
+                <input type="number" id="floors-input" placeholder="Количество этажей" min="1" value="1" style="width: 150px;" />
+                <button type="submit" id="upload-submit-btn" class="icon-button">⬆️</button>
+            </div>
+        </form>
+
+        <div id="inventory-container" class="inventory-container" style="display: none;">
+            <div class="inventory-header">
+                <h2>Инвентарь</h2>
+                <button id="close-inventory" class="close-btn">✖</button>
+            </div>
+            <div id="inventory-items" class="inventory-items">
+                <div class="item" data-model="{{ url_for('static', filename='assets/3D_sofa_14.glb') }}" data-type="Мебель (диван)">
+                    <img src="{{ url_for('static', filename='assets/texture1.jpg') }}" alt="Sofa" width="50">
+                    <p>Диван</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D-arch</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+<body>
+    <div id="threeDContainer">
+        <h1><img src="{{ url_for('static', filename='1.png') }}" alt="D"> -arch</h1>
+        <button class="round-blue-btn" aria-label="Активировать VR-режим">VR</button>
+        <button id="inventory-btn" aria-label="Открыть инвентарь">IN</button>
+        <button id="download-btn" style="display: none;" aria-label="Скачать модель в формате GLB">⬇</button>
+            <div id="inventory-container" class="inventory-container" style="display: none;">
+                <div class="inventory-header">
+                    <h2>Инвентарь</h2>
+                    <button id="close-inventory" class="close-btn" aria-label="Закрыть инвентарь">✖</button>
+                </div>
+                <div id="inventory-items" class="inventory-items">
+                    <div class="item" data-model="{{ url_for('static', filename='assets/3D_sofa_14.glb') }}" data-type="Мебель (диван)">
+                        <img src="{{ url_for('static', filename='assets/texture1.jpg') }}" alt="Sofa" width="50">
+                        <p>Диван</p>
+                    </div>
+                </div>
+            </div>
+        <div class="container">
+            <div class="paramters">
+                <div id="size-controls" style="display: none;">
+                    <label for="width">Ширина: <input type="number" id="width" step="0.1" value="6"></label>
+                    <label for="depth">Глубина: <input type="number" id="depth" step="0.1" value="6"></label>
+                    <button onclick="updateRoomSize()">Обновить размеры</button>
+                    <div id="house-info"></div>
+                    <div id="object-info"></div>
+                </div>
+            </div>
+
+
+            <div class="chat">
+                <input type="text" id="user-input" placeholder="Например: '6 на 10 2 этаж 3 комнаты'" autofocus />
+                
+            <form id="upload-form" class="chat-input" enctype="multipart/form-data">
+                <input type="file" id="image-upload" accept="image/*" />
+                <div id="upload-options" class="upload-options">
+                    <input type="number" id="floors-input" placeholder="Количество этажей" min="1" value="1" style="width: 5px;" />
+                    <button type="submit" id="upload-submit-btn" class="icon-button" aria-label="Загрузить изображение">⬆</button>
+                </div>
+                <button type="submit" aria-label="Отправить запрос">➤</button>
+            </form>
+            </div>
+    </div>
+</body>
+</html>
