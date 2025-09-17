@@ -3,208 +3,208 @@
 
 
 
-# import cv2
-# import numpy as np
-# from PIL import Image
-# import io
+# # import cv2
+# # import numpy as np
+# # from PIL import Image
+# # import io
 
-# def process_2d_image(image_file, floors):
-#     # Читаем изображение
-#     image = Image.open(image_file).convert('RGB')
-#     img_array = np.array(image)
-#     gray = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
+# # def process_2d_image(image_file, floors):
+# #     # Читаем изображение
+# #     image = Image.open(image_file).convert('RGB')
+# #     img_array = np.array(image)
+# #     gray = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
 
-#     # Применяем пороговое значение для выделения чёрных линий
-#     _, thresh = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY_INV)
+# #     # Применяем пороговое значение для выделения чёрных линий
+# #     _, thresh = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY_INV)
 
-#     # Находим контуры (чёрные линии)
-#     contours, _ = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+# #     # Находим контуры (чёрные линии)
+# #     contours, _ = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
-#     if not contours:
-#         raise ValueError("Не удалось найти контуры на изображении. Убедитесь, что чертеж содержит чёрные линии.")
+# #     if not contours:
+# #         raise ValueError("Не удалось найти контуры на изображении. Убедитесь, что чертеж содержит чёрные линии.")
 
-#     # Находим самый внешний контур (с наибольшей площадью)
-#     outer_contour = max(contours, key=cv2.contourArea)
+# #     # Находим самый внешний контур (с наибольшей площадью)
+# #     outer_contour = max(contours, key=cv2.contourArea)
 
-#     # Масштабируем размеры в метры (1 пиксель = 0.1 метра)
-#     scale = 0.1
+# #     # Масштабируем размеры в метры (1 пиксель = 0.1 метра)
+# #     scale = 0.1
 
-#     # Генерируем базовую структуру дома
-#     wall_height = 3.0
-#     wall_thickness = 0.2
-#     house_data = {
-#         "floor": None,
-#         "walls": [],
-#         "upper_floors": [],
-#         "roof": None,
-#         "windows": [],
-#         "doors": [],
-#         "stairs": [],
-#         "furniture": []
-#     }
+# #     # Генерируем базовую структуру дома
+# #     wall_height = 3.0
+# #     wall_thickness = 0.2
+# #     house_data = {
+# #         "floor": None,
+# #         "walls": [],
+# #         "upper_floors": [],
+# #         "roof": None,
+# #         "windows": [],
+# #         "doors": [],
+# #         "stairs": [],
+# #         "furniture": []
+# #     }
 
-#     # Приближаем внешний контур к полигону
-#     epsilon = 0.01 * cv2.arcLength(outer_contour, True)
-#     approx = cv2.approxPolyDP(outer_contour, epsilon, True)
+# #     # Приближаем внешний контур к полигону
+# #     epsilon = 0.01 * cv2.arcLength(outer_contour, True)
+# #     approx = cv2.approxPolyDP(outer_contour, epsilon, True)
 
-#     # Создаём вершины пола
-#     vertices = []
-#     for point in approx:
-#         px, pz = point[0][0] * scale, point[0][1] * scale
-#         vertices.append([px, pz])
+# #     # Создаём вершины пола
+# #     vertices = []
+# #     for point in approx:
+# #         px, pz = point[0][0] * scale, point[0][1] * scale
+# #         vertices.append([px, pz])
 
-#     # Вычисляем центр пола для позиционирования
-#     center_x = sum(v[0] for v in vertices) / len(vertices)
-#     center_z = sum(v[1] for v in vertices) / len(vertices)
+# #     # Вычисляем центр пола для позиционирования
+# #     center_x = sum(v[0] for v in vertices) / len(vertices)
+# #     center_z = sum(v[1] for v in vertices) / len(vertices)
 
-#     # Отладочный вывод
-#     print(f"Floor vertices: {vertices}")
-#     print(f"Floor center: ({center_x}, {center_z})")
+# #     # Отладочный вывод
+# #     print(f"Floor vertices: {vertices}")
+# #     print(f"Floor center: ({center_x}, {center_z})")
 
-#     # Создаём пол на основе внешнего контура (без лишних областей)
-#     floor_data = {
-#         "vertices": vertices,  # Вершины задают точную форму пола
-#         "position": [center_x, wall_thickness / 2, center_z],  # Пол на уровне земли
-#         "rotation": [0, 0, 0],
-#         "color": "#8B4513",  # Коричневый цвет для пола
-#         "opacity": 1.0,
-#         "thickness": wall_thickness  # Толщина пола
-#     }
-#     house_data["floor"] = floor_data
+# #     # Создаём пол на основе внешнего контура (без лишних областей)
+# #     floor_data = {
+# #         "vertices": vertices,  # Вершины задают точную форму пола
+# #         "position": [center_x, wall_thickness / 2, center_z],  # Пол на уровне земли
+# #         "rotation": [0, 0, 0],
+# #         "color": "#8B4513",  # Коричневый цвет для пола
+# #         "opacity": 1.0,
+# #         "thickness": wall_thickness  # Толщина пола
+# #     }
+# #     house_data["floor"] = floor_data
 
-#     # Вычисляем размеры для совместимости (ширина и высота как максимальные расстояния между вершинами)
-#     x_coords = [v[0] for v in vertices]
-#     z_coords = [v[1] for v in vertices]
-#     real_width = (max(x_coords) - min(x_coords))
-#     real_height = (max(z_coords) - min(z_coords))
-#     floor_data["size"] = [real_width, wall_thickness, real_height]  # Для updateCameraTarget
+# #     # Вычисляем размеры для совместимости (ширина и высота как максимальные расстояния между вершинами)
+# #     x_coords = [v[0] for v in vertices]
+# #     z_coords = [v[1] for v in vertices]
+# #     real_width = (max(x_coords) - min(x_coords))
+# #     real_height = (max(z_coords) - min(z_coords))
+# #     floor_data["size"] = [real_width, wall_thickness, real_height]  # Для updateCameraTarget
 
-#     # Генерируем стены на основе внешнего контура
-#     for i in range(floors):
-#         floor_offset = i * wall_height
-#         opacity = 1.0 if i == 0 else 0.5
-#         walls_per_floor = []
+# #     # Генерируем стены на основе внешнего контура
+# #     for i in range(floors):
+# #         floor_offset = i * wall_height
+# #         opacity = 1.0 if i == 0 else 0.5
+# #         walls_per_floor = []
 
-#         # Создаём стены вдоль внешнего контура
-#         for j in range(len(approx)):
-#             p1 = approx[j][0]
-#             p2 = approx[(j + 1) % len(approx)][0]
+# #         # Создаём стены вдоль внешнего контура
+# #         for j in range(len(approx)):
+# #             p1 = approx[j][0]
+# #             p2 = approx[(j + 1) % len(approx)][0]
 
-#             # Координаты в пикселях
-#             x1, z1 = p1[0], p1[1]
-#             x2, z2 = p2[0], p2[1]
+# #             # Координаты в пикселях
+# #             x1, z1 = p1[0], p1[1]
+# #             x2, z2 = p2[0], p2[1]
 
-#             # Преобразуем в метры
-#             x1_m, z1_m = x1 * scale, z1 * scale
-#             x2_m, z2_m = x2 * scale, z2 * scale
+# #             # Преобразуем в метры
+# #             x1_m, z1_m = x1 * scale, z1 * scale
+# #             x2_m, z2_m = x2 * scale, z2 * scale
 
-#             # Определяем длину стены и её центр
-#             length = np.sqrt((x2_m - x1_m)**2 + (z2_m - z1_m)**2)
-#             center_x_wall = (x1_m + x2_m) / 2
-#             center_z_wall = (z1_m + z2_m) / 2
+# #             # Определяем длину стены и её центр
+# #             length = np.sqrt((x2_m - x1_m)**2 + (z2_m - z1_m)**2)
+# #             center_x_wall = (x1_m + x2_m) / 2
+# #             center_z_wall = (z1_m + z2_m) / 2
 
-#             # Определяем угол поворота
-#             angle = np.arctan2(z2_m - z1_m, x2_m - x1_m) * 180 / np.pi
+# #             # Определяем угол поворота
+# #             angle = np.arctan2(z2_m - z1_m, x2_m - x1_m) * 180 / np.pi
 
-#             # Нормализуем угол в диапазон [0, 180]
-#             angle = angle % 180
-#             if angle > 90:
-#                 angle -= 180
-#             angle = abs(angle)
+# #             # Нормализуем угол в диапазон [0, 180]
+# #             angle = angle % 180
+# #             if angle > 90:
+# #                 angle -= 180
+# #             angle = abs(angle)
 
-#             # Определяем ориентацию стены
-#             if angle < 45:
-#                 walls_per_floor.append({
-#                     "size": [length, wall_height, wall_thickness],
-#                     "position": [center_x_wall, floor_offset + wall_height / 2, center_z_wall],
-#                     "rotation": [0, angle, 0],
-#                     "color": "#808080",
-#                     "opacity": opacity
-#                 })
-#             else:
-#                 walls_per_floor.append({
-#                     "size": [wall_thickness, wall_height, length],
-#                     "position": [center_x_wall, floor_offset + wall_height / 2, center_z_wall],
-#                     "rotation": [0, angle - 90, 0],
-#                     "color": "#808080",
-#                     "opacity": opacity
-#                 })
+# #             # Определяем ориентацию стены
+# #             if angle < 45:
+# #                 walls_per_floor.append({
+# #                     "size": [length, wall_height, wall_thickness],
+# #                     "position": [center_x_wall, floor_offset + wall_height / 2, center_z_wall],
+# #                     "rotation": [0, angle, 0],
+# #                     "color": "#808080",
+# #                     "opacity": opacity
+# #                 })
+# #             else:
+# #                 walls_per_floor.append({
+# #                     "size": [wall_thickness, wall_height, length],
+# #                     "position": [center_x_wall, floor_offset + wall_height / 2, center_z_wall],
+# #                     "rotation": [0, angle - 90, 0],
+# #                     "color": "#808080",
+# #                     "opacity": opacity
+# #                 })
 
-#         # Добавляем внутренние стены на основе остальных контуров (только на первом этаже)
-#         if i == 0:
-#             for contour in contours:
-#                 if contour is outer_contour:
-#                     continue  # Пропускаем внешний контур
+# #         # Добавляем внутренние стены на основе остальных контуров (только на первом этаже)
+# #         if i == 0:
+# #             for contour in contours:
+# #                 if contour is outer_contour:
+# #                     continue  # Пропускаем внешний контур
 
-#                 # Приближаем контур к полигону
-#                 epsilon = 0.01 * cv2.arcLength(contour, True)
-#                 approx_inner = cv2.approxPolyDP(contour, epsilon, True)
+# #                 # Приближаем контур к полигону
+# #                 epsilon = 0.01 * cv2.arcLength(contour, True)
+# #                 approx_inner = cv2.approxPolyDP(contour, epsilon, True)
 
-#                 # Создаём стены для внутреннего контура
-#                 for j in range(len(approx_inner)):
-#                     p1 = approx_inner[j][0]
-#                     p2 = approx_inner[(j + 1) % len(approx_inner)][0]
+# #                 # Создаём стены для внутреннего контура
+# #                 for j in range(len(approx_inner)):
+# #                     p1 = approx_inner[j][0]
+# #                     p2 = approx_inner[(j + 1) % len(approx_inner)][0]
 
-#                     x1, z1 = p1[0], p1[1]
-#                     x2, z2 = p2[0], p2[1]
+# #                     x1, z1 = p1[0], p1[1]
+# #                     x2, z2 = p2[0], p2[1]
 
-#                     x1_m, z1_m = x1 * scale, z1 * scale
-#                     x2_m, z2_m = x2 * scale, z2 * scale
+# #                     x1_m, z1_m = x1 * scale, z1 * scale
+# #                     x2_m, z2_m = x2 * scale, z2 * scale
 
-#                     length = np.sqrt((x2_m - x1_m)**2 + (z2_m - z1_m)**2)
-#                     center_x_wall = (x1_m + x2_m) / 2
-#                     center_z_wall = (z1_m + z2_m) / 2
+# #                     length = np.sqrt((x2_m - x1_m)**2 + (z2_m - z1_m)**2)
+# #                     center_x_wall = (x1_m + x2_m) / 2
+# #                     center_z_wall = (z1_m + z2_m) / 2
 
-#                     angle = np.arctan2(z2_m - z1_m, x2_m - x1_m) * 180 / np.pi
+# #                     angle = np.arctan2(z2_m - z1_m, x2_m - x1_m) * 180 / np.pi
 
-#                     # Нормализуем угол в диапазон [0, 180]
-#                     angle = angle % 180
-#                     if angle > 90:
-#                         angle -= 180
-#                     angle = abs(angle)
+# #                     # Нормализуем угол в диапазон [0, 180]
+# #                     angle = angle % 180
+# #                     if angle > 90:
+# #                         angle -= 180
+# #                     angle = abs(angle)
 
-#                     if angle < 45:
-#                         walls_per_floor.append({
-#                             "size": [length, wall_height, wall_thickness],
-#                             "position": [center_x_wall, floor_offset + wall_height / 2, center_z_wall],
-#                             "rotation": [0, angle, 0],
-#                             "color": "#808080",
-#                             "opacity": 1.0
-#                         })
-#                     else:
-#                         walls_per_floor.append({
-#                             "size": [wall_thickness, wall_height, length],
-#                             "position": [center_x_wall, floor_offset + wall_height / 2, center_z_wall],
-#                             "rotation": [0, angle - 90, 0],
-#                             "color": "#808080",
-#                             "opacity": 1.0
-#                         })
+# #                     if angle < 45:
+# #                         walls_per_floor.append({
+# #                             "size": [length, wall_height, wall_thickness],
+# #                             "position": [center_x_wall, floor_offset + wall_height / 2, center_z_wall],
+# #                             "rotation": [0, angle, 0],
+# #                             "color": "#808080",
+# #                             "opacity": 1.0
+# #                         })
+# #                     else:
+# #                         walls_per_floor.append({
+# #                             "size": [wall_thickness, wall_height, length],
+# #                             "position": [center_x_wall, floor_offset + wall_height / 2, center_z_wall],
+# #                             "rotation": [0, angle - 90, 0],
+# #                             "color": "#808080",
+# #                             "opacity": 1.0
+# #                         })
 
-#         house_data["walls"].extend(walls_per_floor)
+# #         house_data["walls"].extend(walls_per_floor)
 
-#         # Добавляем верхние этажи
-#         if i > 0:
-#             upper_floor = {
-#                 "vertices": vertices,  # Используем те же вершины для верхних этажей
-#                 "position": [center_x, floor_offset + wall_height - wall_thickness / 2, center_z],
-#                 "rotation": [0, 0, 0],
-#                 "color": "#8B4513",
-#                 "opacity": 0.3,
-#                 "size": [real_width, wall_thickness, real_height]  # Для совместимости
-#             }
-#             house_data["upper_floors"].append(upper_floor)
+# #         # Добавляем верхние этажи
+# #         if i > 0:
+# #             upper_floor = {
+# #                 "vertices": vertices,  # Используем те же вершины для верхних этажей
+# #                 "position": [center_x, floor_offset + wall_height - wall_thickness / 2, center_z],
+# #                 "rotation": [0, 0, 0],
+# #                 "color": "#8B4513",
+# #                 "opacity": 0.3,
+# #                 "size": [real_width, wall_thickness, real_height]  # Для совместимости
+# #             }
+# #             house_data["upper_floors"].append(upper_floor)
 
-#     # Добавляем крышу
-#     house_data["roof"] = {
-#         "color": "#555555",
-#         "size": [real_width, 2.0, real_height],
-#         "position": [center_x, floors * wall_height, center_z],
-#         "rotation": [0, 0, 0],
-#         "shape": "pitched",
-#         "texture": "/static/textures/roof.jpg"
-#     }
+# #     # Добавляем крышу
+# #     house_data["roof"] = {
+# #         "color": "#555555",
+# #         "size": [real_width, 2.0, real_height],
+# #         "position": [center_x, floors * wall_height, center_z],
+# #         "rotation": [0, 0, 0],
+# #         "shape": "pitched",
+# #         "texture": "/static/textures/roof.jpg"
+# #     }
 
-#     return house_data
+# #     return house_data
 
 
 
